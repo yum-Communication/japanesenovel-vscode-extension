@@ -1,0 +1,7 @@
+
+*.vsix
+node_modules
+*.pdf
+out
+.vscode-test/
+**/publish/**

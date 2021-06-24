@@ -1,0 +1,66 @@
+{
+    "scopeName": "script.novel",
+	"name": "novel-script",
+	"patterns": [
+		{
+			"include": "#novel-document"
+		}
+	],
+	"repository": {
+		"novel-document": {
+			"patterns": [
+				{ "include": "#arabic-numerals"},
+				{ "include": "#kanji-numerals"},
+				{ "include": "#kanji-numerals2"},
+				{ "include": "#ruby" },
+				{ "include": "#dialogue" }
+			]
+		},
+		"arabic-numerals": {
+			"name": "constant.numeric",
+			"match": "[1-9][0-9]*"
+		},
+		"kanji-numerals": {
+			"patterns":[
+				{ "include": "#kanji-numerals-a"},
+				{ "include": "#kanji-numerals-b"},
+				{ "include": "#kanji-numerals-c"}
+			]
+		},
+		"kanji-numerals-a": {
+			"name": "constant.character",
+			"match": "[十百千]?([一二三四五六七八九][十百千万億兆京])*[一二三四五六七八九]"
+		},
+		"kanji-numerals-b": {
+			"name": "constant.character",
+			"match": "[十百千]?([一二三四五六七八九][十百千万億兆京])+[一二三四五六七八九]?"
+		},
+		"kanji-numerals-c": {
+			"name": "constant.character",
+			"match": "[十百千]([一二三四五六七八九][十百千万億兆京])*[一二三四五六七八九]?"
+		},
+		"kanji-numerals2": {
+			"name": "constant.character",
+			"match": "[一二三四五六七八九][一二三四五六七八九〇]*"
+		},
+		"ruby": {
+			"match": "[|｜](?!《)[^《]+《[^》]+》",
+			"name": "variable"
+		},
+		"ruby-parent": {
+			"name": "variable",
+			"begin": "[|｜]",
+			"end": "(?=《)"
+		},
+		"ruby-child": {
+			"name": "variable",
+			"begin": "《",
+			"end": "》"
+		},
+		"dialogue": {
+			"name": "string",
+			"begin": "^\\s*「",
+			"end": "」"
+		}
+	}
+}
