@@ -8,3 +8,6 @@ src/**
 **/.eslintrc.json
 **/*.map
 **/*.ts
+**/*.tsbuildinfo
+
+.gitignore

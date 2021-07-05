@@ -1,6 +1,6 @@
 {
-    "scopeName": "script.novel",
-	"name": "novel-script",
+    "scopeName": "novel.text",
+	"name": "novel.text",
 	"patterns": [
 		{
 			"include": "#novel-document"
@@ -9,43 +9,105 @@
 	"repository": {
 		"novel-document": {
 			"patterns": [
-				{ "include": "#arabic-numerals"},
-				{ "include": "#kanji-numerals"},
-				{ "include": "#kanji-numerals2"},
-				{ "include": "#ruby" },
+				{ "include": "#descriptive-part"},
 				{ "include": "#dialogue" }
 			]
 		},
-		"arabic-numerals": {
-			"name": "constant.numeric",
-			"match": "[1-9][0-9]*"
-		},
-		"kanji-numerals": {
-			"patterns":[
-				{ "include": "#kanji-numerals-a"},
-				{ "include": "#kanji-numerals-b"},
-				{ "include": "#kanji-numerals-c"}
+		"descriptive-part": {
+			"patterns": [
+				{ "include": "#punctuation"} ,
+				{ "include": "#numerals" },
+				{ "include": "#hirakana" },
+				{ "include": "#katakana" },
+				{ "include": "#alphabet" },
+				{ "include": "#ruby" },
+				{ "include": "#punctuation-symbol-invalid" }
 			]
 		},
-		"kanji-numerals-a": {
-			"name": "constant.character",
-			"match": "[十百千]?([一二三四五六七八九][十百千万億兆京])*[一二三四五六七八九]"
+		"dialogue": {
+			"name": "novel.text.dialogue",
+			"begin": "^\\s*「",
+			"end": "」",
+			"patterns": [
+				{ "include": "#punctuation" },
+				{ "include": "#numerals" },
+				{ "include": "#hirakana" },
+				{ "include": "#katakana" },
+				{ "include": "#alphabet" },
+				{ "include": "#ruby" },
+				{ "include": "#punctuation-symbol-invalid" }
+			]
 		},
-		"kanji-numerals-b": {
-			"name": "constant.character",
-			"match": "[十百千]?([一二三四五六七八九][十百千万億兆京])+[一二三四五六七八九]?"
+		"punctuation": {
+			"patterns": [
+				{ "include": "#punctuation-generic" },
+				{ "include": "#punctuation-symbol" }
+			]
 		},
-		"kanji-numerals-c": {
-			"name": "constant.character",
-			"match": "[十百千]([一二三四五六七八九][十百千万億兆京])*[一二三四五六七八九]?"
+		"punctuation-generic": {
+			"name": "novel.text.punctuation.generic",
+			"match": "[、。，．]"
 		},
-		"kanji-numerals2": {
-			"name": "constant.character",
-			"match": "[一二三四五六七八九][一二三四五六七八九〇]*"
+		"punctuation-symbol": {
+			"name": "novel.text.punctuation.symbol",
+			"match": "([！？]+|[!?]+|[⁇⁈⁉])(?=\\s|[）」』])"
+		},
+		"punctuation-symbol-invalid": {
+			"name": "novel.invalid",
+			"match": "([！？]+|[!?]+|[⁇⁈⁉])(?!\\s|[）」』])"
+		},
+		"numerals" : {
+			"patterns": [
+				{ "include": "#arabic-numerals" },
+				{ "include": "#kanji-numerals" }
+			]
+		},
+		"arabic-numerals": {
+			"patterns": [
+				{ "include": "#arabic-numerals-hankaku" },
+				{ "include": "#arabic-numerals-zenkaku" }
+			]
+		},
+		"arabic-numerals-hankaku": {
+			"name": "novel.numerals.arabic",
+			"match": "-?[0-9]+"
+		},
+		"arabic-numerals-zenkaku": {
+			"name": "novel.numerals.arabic",
+			"match": "－?[０-９]+"
+		},
+		"kanji-numerals": {
+			"name": "novel.numerals.kanji",
+			"match": "[一二三四五六七八九十百千][〇一二三四五六七八九十百千万億兆京]+"
+		},
+		"hirakana": {
+			"name":"novel.text.hirakana",
+			"match": "[ぁ-ゞ][ぁ-ゞー]*"
+		},
+		"katakana": {
+			"name": "novel.text.katakana",
+			"match": "[ァ-ヾ\u3099-\u309c][ーァ-ヾ\u3099-\u309c]*"
+		},
+		"alphabet": {
+			"name": "novel.text.alpha",
+			"patterns": [
+				{ "include": "#alphabet-hankaku" },
+				{ "include": "#alphabet-zenkaku" }
+			]
+		},
+		"kanji": {
+			"name": "novel.script.kanji",
+			"match": "(([\u3005\u3007\u303b\u3400-\u9FFF\uF900-\uFAFF]|[\uD840-\uD87F][\uDC00-\uDFFF])([\uDB40][\udd00-\uddef]|[\uFE00-\uFE02])?)+"
+		},
+		"alphabet-hankaku": {
+			"match": "[A-Za-z]+"
+		},
+		"alphabet-zenkaku": {
+			"match": "[Ａ-Ｚａ-ｚ]+"
 		},
 		"ruby": {
-			"match": "[|｜](?!《)[^《]+《[^》]+》",
-			"name": "variable"
+			"name": "novel.text.ruby",
+			"match": "[|｜](?!《)[^《]+《[^》]+》"
 		},
 		"ruby-parent": {
 			"name": "variable",
@@ -56,11 +118,6 @@
 			"name": "variable",
 			"begin": "《",
 			"end": "》"
-		},
-		"dialogue": {
-			"name": "string",
-			"begin": "^\\s*「",
-			"end": "」"
 		}
 	}
 }

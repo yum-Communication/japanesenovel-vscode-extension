@@ -1,0 +1,23 @@
+{
+	"name": "yum-novel-ext-client",
+	"description": "language client extension for novel writing",
+	"version": "0.0.2",
+	"author": "yum-communication",
+	"publisher": "yum-communication",
+	"license": "Apache-2.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yum-Communication/japanesenobel-vscode-extension.git"
+	},
+	"engines": {
+		"vscode": "^1.56.0"
+	},
+	"dependencies": {
+		"vscode-languageclient": "^6.1.3",
+		"glob": "^7.1.7"
+	},
+	"devDependencies": {
+		"@types/node": "^12.12.0",
+		"@types/vscode": "^1.56.0"
+	}
+}

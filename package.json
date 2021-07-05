@@ -2,56 +2,86 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "extension for novel writing.",
-	"version": "0.0.1",
-	"publisher": "yum communication Co. Ltd.",
+	"version": "0.0.2",
+	"publisher": "yumCommunication",
+	"license": "Apache-2.0",
+	"private": "true",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yum-Communication/japanesenobel-vscode-extension.git"
+	},
 	"engines": {
 		"vscode": "^1.56.0"
 	},
 	"categories": [
+		"Programming Languages",
 		"Other"
 	],
 	"activationEvents": [
-		"*"
+		"onLanguage:noveltext"
 	],
-	"main": "./out/extension.js",
+	"main": "./client/out/extension",
 	"contributes": {
 		"commands": [
 			{
-				"command": "yumNovelExt.helloWorld",
-				"title": "Hello Novel"
+				"command": "yumNovelExt.extractRuby",
+				"title": "Extraction ruby from current document.",
+				"shortTitle": "Extraction ruby",
+				"category": "Novel"
+			},
+			{
+				"command": "yumNovelExt.extractRubyAll",
+				"title": "Extraction ruby from all documents.",
+				"shortTitle": "Extraction ruby all",
+				"category": "Novel"
 			}
 		],
-		"languages": [{
-			"id": "novelscript",
-			"aliases": ["Novel script"],
-			"extensions": [".txt",".nvl"],
-			"configuration": "./language-configuration.json"
-		}],
-		"grammars": [{
-			"language": "novelscript",
-			"scopeName": "script.novel",
-			"path": "./syntaxes/novel.tmLanguage.json"
-		}]
+		"languages": [
+			{
+				"id": "noveltext",
+				"aliases": [
+					"Novel text"
+				],
+				"extensions": [
+					".txt",
+					".nvl"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "noveltext",
+				"scopeName": "novel.text",
+				"path": "./syntaxes/novel.tmLanguage.json"
+			}
+		],
+		"configuration": [
+			{
+				"title": "NovelText",
+				"properties": {
+					"NovelText.uniquenouns": {
+						"type": "string",
+						"default": "uniquenouns.json",
+						"description": "固有名詞の定義"
+					}
+				}
+			}
+		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"vscode:prepublish": "cd client && npm install && cd .. && npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"postinstall": "cd client && npm install && cd ..",
+		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.56.0",
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.0.4",
-		"@types/node": "^12.11.7",
-		"eslint": "^7.19.0",
-		"@typescript-eslint/eslint-plugin": "^4.14.1",
-		"@typescript-eslint/parser": "^4.14.1",
-		"glob": "^7.1.6",
-		"mocha": "^8.2.1",
-		"typescript": "^4.1.3",
-		"vscode-test": "^1.5.0"
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.12.0",
+		"@typescript-eslint/eslint-plugin": "^4.16.0",
+		"@typescript-eslint/parser": "^4.16.0",
+		"eslint": "^7.21.0",
+		"typescript": "^4.2.2"
 	}
 }
