@@ -5,11 +5,11 @@ import {
 	readFile,
 	writeFile
 } from 'fs';
-import { TextDocument, Uri, window, WorkspaceFolder } from 'vscode';
+import { Position, TextDocument, Uri, window, workspace, WorkspaceFolder } from 'vscode';
 
 function extractRubyFromString(rubys:Map<string,number>, data:string) {
 	let rgx:RegExp = RegExp("[|｜](?!《)[^《]+《[^》]+》", 'g');
-	let rgxx:RegExp = RegExp("《[・﹅●○]》");
+	let rgxx:RegExp = RegExp("《[・﹅﹆●○]》");
 	let m:RegExpExecArray;
 	while((m = rgx.exec(data)) !== null){
 		let n = 1;
@@ -35,12 +35,32 @@ function saveRuby(map:Map<string,number>, savePath:string, callback:NoParamCallb
 	writeFile(savePath, d, callback);
 }
 
+async function toNewFile(d:string)
+{
+	try {
+		let doc = await workspace.openTextDocument({language: "plaintext"});
+		await window.showTextDocument(doc);
+		window.activeTextEditor.edit(editBuilder => {
+			editBuilder.insert(new Position(0, 0), d);
+		});
+	} catch(e) {
+		console.log(e);
+	}
+}
+
 export function extractRubyFromDoc(doc:TextDocument, savePath:string): void {
 	let map:Map<string,number> = new Map();
 	extractRubyFromString(map, doc.getText());
-	saveRuby(map, savePath, () =>{
-		window.showInformationMessage('The extraction of ruby has been completed.');
+
+	let d:string = "";
+	map.forEach((v, k, m) => {
+		d += k + "\n";
 	});
+
+	toNewFile(d);
+	// saveRuby(map, savePath, () =>{
+	// 	window.showInformationMessage('The extraction of ruby has been completed.');
+	// });
 	return;
 }
 

@@ -2,7 +2,7 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "extension for novel writing.",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
 	"private": "true",
@@ -25,14 +25,26 @@
 		"commands": [
 			{
 				"command": "yumNovelExt.extractRuby",
-				"title": "Extraction ruby from current document.",
+				"title": "ルビの抽出（現在のファイル）",
 				"shortTitle": "Extraction ruby",
 				"category": "Novel"
 			},
 			{
 				"command": "yumNovelExt.extractRubyAll",
-				"title": "Extraction ruby from all documents.",
+				"title": "ルビの抽出（全てのファイル）",
 				"shortTitle": "Extraction ruby all",
+				"category": "Novel"
+			},
+			{
+				"command": "yumNovelExt.export.narou",
+				"title": "『小説家になろう』向けに出力",
+				"shortTitle": "NAROU",
+				"category": "Novel"
+			},
+			{
+				"command": "yumNovelExt.export.kakuyomu",
+				"title": "『カクヨム』向けに出力",
+				"shortTitle": "KAKUYOMU",
 				"category": "Novel"
 			}
 		],
@@ -64,6 +76,93 @@
 						"type": "string",
 						"default": "uniquenouns.json",
 						"description": "固有名詞の定義"
+					},
+					"NovelText.formatting.paragraphIndentNum": {
+						"type":"number",
+						"default": "1",
+						"description": "段落のインデントの数",
+						"minimum": 0,
+						"maximum": 10,
+						"scope": "resource"
+					},
+					"NovelText.formatting.paragraphIndentType": {
+						"type":"string",
+						"enum": [
+							"半角空白",
+							"全角空白",
+							"タブ",
+							"EM SP"
+						],
+						"default": "全角空白",
+						"description": "段落のインデントの種類",
+						"scope": "resource"
+					},
+					"NovelText.formatting.dialogueIndentNum": {
+						"type":"number",
+						"default": "0",
+						"description": "台詞のインデントの数",
+						"minimum": 0,
+						"maximum": 10,
+						"scope": "resource"
+					},
+					"NovelText.formatting.dialogueIndentType": {
+						"type":"string",
+						"enum": [
+							"半角空白",
+							"全角空白",
+							"タブ",
+							"EM SP"
+						],
+						"default": "全角空白",
+						"description": "台詞のインデントの種類",
+						"scope": "resource"
+					},
+					"NovelText.formatting.periodAtEndOfDialogue": {
+						"type": "string",
+						"enum": [
+							"追加",
+							"削除",
+							"そのまま"
+						],
+						"default": "そのまま",
+						"description": "台詞末尾の句点",
+						"scope":"resource"
+					},
+					"NovelText.formatting.spaceAfterExclamation": {
+						"type": "string",
+						"enum": [
+							"追加",
+							"削除",
+							"そのまま"
+						],
+						"default": "追加",
+						"description": "感嘆符・疑問符の後のスペース",
+						"scope": "resource"
+					},
+					"NovelText.formatting.spaceAfterExclamationType": {
+						"type": "string",
+						"enum": [
+							"半角空白",
+							"全角空白",
+							"タブ",
+							"EM SP"
+						],
+						"default": "全角空白",
+						"description": "追加する感嘆符・疑問符の後のスペース",
+						"scope": "resource"
+					},
+					"NovelText.formatting.emphasisMark": {
+						"type": "string",
+						"enum": [
+							"・ 中黒",
+							"● 黒丸",
+							"○ 白丸",
+							"﹅ 黒ゴマ",
+							"﹆ 白ゴマ"
+						],
+						"default": "﹅ 黒ゴマ",
+						"description": "傍点（圏点）に使用するマーク",
+						"scope": "resource"
 					}
 				}
 			}

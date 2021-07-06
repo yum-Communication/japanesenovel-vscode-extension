@@ -21,6 +21,7 @@
 				{ "include": "#katakana" },
 				{ "include": "#alphabet" },
 				{ "include": "#ruby" },
+				{ "include": "#emphasis" },
 				{ "include": "#punctuation-symbol-invalid" }
 			]
 		},
@@ -35,6 +36,7 @@
 				{ "include": "#katakana" },
 				{ "include": "#alphabet" },
 				{ "include": "#ruby" },
+				{ "include": "#emphasis" },
 				{ "include": "#punctuation-symbol-invalid" }
 			]
 		},
@@ -104,6 +106,10 @@
 		},
 		"alphabet-zenkaku": {
 			"match": "[Ａ-Ｚａ-ｚ]+"
+		},
+		"emphasis": {
+			"name": "novel.text.ruby",
+			"match": "《《([^《》]+)》》"
 		},
 		"ruby": {
 			"name": "novel.text.ruby",

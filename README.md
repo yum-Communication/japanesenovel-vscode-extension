@@ -5,17 +5,13 @@ VSCodeで小説を書く手伝いをするエクステンションです。
 ## ハイライト
 以下をsettingsに設定することで、各部分に色がつきます。※対象は .txt および .nov 
 
-novel.text.dialogue: 台詞
-
-novel.numerals: 数詞（漢数字、算用数字ともに同色）
-
-novel.text.ruby: ルビ（本体、ルビともに同色）
-*※ルビは必ず〝｜〟で始まること。*
-
-novel.text.katakana: カタカナ
-
-novel.text.punctuation: 句読点
-
+|scope|説明|
+|---|---|
+|novel.text.dialogue|台詞|
+|novel.numerals|数詞（漢数字、算用数字ともに同色）|
+|novel.text.ruby|ルビ（本体、ルビともに同色）、カクヨム式傍点<br>ルビの形式：<br>｜ルビを振る文字《ルビとなる文字》<br>カクヨム式傍点の形式：<br>《《傍点を振る文字》》|
+|novel.text.katakana|カタカナ|
+|novel.text.punctuation|句読点|
 
 設定例）フォルダ設定の場合
 .vscode/settings.json
@@ -80,8 +76,18 @@ novel-title.code-workspace
 
 フォルダ内全てのファイルを対象にルビを抽出する場合は Novel: Extraction ruby from all documents. を使用してください。
 
+### 形式の変換
+段落のインデント、疑問符・感嘆符の後のスペース、台詞の末尾の句点の一括挿入、削除ができる。
+
+傍点の形式の変換ができる。
+
+*※ 変換後の文書は新規ファイルに出力される。*
 
 ## Release Notes
+
+## 0.0.3
+- 整形機能
+- カクヨム式傍点のカラーリング対応
 
 ## 0.0.2
 - 文字数カウント機能

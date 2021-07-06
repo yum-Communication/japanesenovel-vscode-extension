@@ -5,6 +5,7 @@ import {
 	DocumentSemanticTokensProvider,
 	ExtensionContext,
 	languages,
+	Position,
 	SemanticTokens,
 	SemanticTokensBuilder,
 	SemanticTokensLegend,
@@ -33,10 +34,20 @@ import {
 	extractRubyFromWorkspace
 } from './rubyControl';
 
+import {
+	config
+} from './config';
+
+import {
+	ConvertType,
+	formatDocument
+} from './novelFormatter';
+
 let client: LanguageClient;
 const tokenTypes = new Map<string, number>();
 const tokenModifiers = new Map<string, number>();
 let myTokenProvider:MyDocumentSemanticTokensProvider;
+
 
 const legend = (function () {
 	const tokenTypesLegend = [
@@ -75,24 +86,61 @@ function getBaseDir(): string | undefined {
 
 export function activate(context: ExtensionContext)
 {
-	// 設定ファイルを読み込む。
-	const conf = workspace.getConfiguration('NovelText');
 	let wsBasePath = getBaseDir();
+	config.reload();
+
+	// 設定が変更されたら読み込みし直すよ
+	context.subscriptions.push(workspace.onDidChangeConfiguration(e => {
+		config.reload();
+	}));
 
 	// コマンド登録
 	// ルビ抽出（単体）
 	context.subscriptions.push(commands.registerCommand('yumNovelExt.extractRuby', ()=>{
 		const editor = window.activeTextEditor;
-		if (!editor)
+		if (editor)
 		{
-			return;
+			extractRubyFromDoc(editor.document, path.join(wsBasePath,"ruby.noveldata"));
 		}
-		extractRubyFromDoc(editor.document, path.join(wsBasePath,"ruby.noveldata"));
 	}));
 
 	// ルビ抽出（全ファイル）
 	context.subscriptions.push(commands.registerCommand('yumNovelExt.extractRubyAll', ()=>{
 		extractRubyFromWorkspace(workspace.workspaceFolders, path.join(wsBasePath,"ruby.noveldata"));
+	}));
+
+	context.subscriptions.push(commands.registerCommand('yumNovelExt.export.narou', async () => {
+		try {
+			// 現在のファイルを読み込んで
+			let s:string = window.activeTextEditor.document.getText();
+			s = formatDocument(s, ConvertType.narou);
+
+			// 新規ファイルを作ってぶち込む
+			let doc = await workspace.openTextDocument({language: "noveltext"});
+			await window.showTextDocument(doc);
+			window.activeTextEditor.edit(editBuilder => {
+				editBuilder.insert(new Position(0, 0), s);
+			});
+		} catch(e) {
+			console.log(e);
+		}
+	}));
+
+	context.subscriptions.push(commands.registerCommand('yumNovelExt.export.kakuyomu', async () => {
+		try {
+			// 現在のファイルを読み込んで
+			let s:string = window.activeTextEditor.document.getText();
+			s = formatDocument(s, ConvertType.kakuyomu);
+
+			// 新規ファイルを作ってぶち込む
+			let doc = await workspace.openTextDocument({language: "noveltext"});
+			await window.showTextDocument(doc);
+			window.activeTextEditor.edit(editBuilder => {
+				editBuilder.insert(new Position(0, 0), s);
+			});
+		} catch(e) {
+			console.log(e);
+		}
 	}));
 
 	// 文字数カウント機能。
@@ -101,7 +149,7 @@ export function activate(context: ExtensionContext)
 	context.subscriptions.push(controller);
 
 	// キーワード機能
-	let uniquenouns:string = conf.get("uniquenouns");
+	const uniquenouns:string = config.uniquenouns;
 	if(uniquenouns)
 	{
 		loadUniquenouns(path.join(wsBasePath, uniquenouns), tokens=>{
