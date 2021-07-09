@@ -1,7 +1,145 @@
 import {
 	readFile,
 } from 'fs';
-import { Position, Range, TextDocument } from 'vscode';
+import {
+	CancellationToken,
+	Disposable,
+	DocumentSemanticTokensProvider,
+	languages,
+	SemanticTokens,
+	SemanticTokensBuilder,
+	SemanticTokensLegend,
+	TextDocument
+} from 'vscode';
+import * as util from 'util';
+const tokenTypes = new Map<string, number>();
+const tokenModifiers = new Map<string, number>();
+let myTokenProvider:MyDocumentSemanticTokensProvider;
+
+
+const legend = (function () {
+	const tokenTypesLegend = [
+		'comment', 'string', 'keyword', 'number', 'regexp', 'operator', 'namespace',
+		'type', 'struct', 'class', 'interface', 'enum', 'typeParameter', 'function',
+		'method', 'macro', 'variable', 'parameter', 'property', 'label',
+	];
+	tokenTypesLegend.forEach((tokenType, index) => tokenTypes.set(tokenType, index));
+
+	const tokenModifiersLegend = [
+		'declaration', 'documentation', 'readonly', 'static', 'abstract', 'deprecated',
+		'modification', 'async',
+	];
+	tokenModifiersLegend.forEach((tokenModifier, index) => tokenModifiers.set(tokenModifier, index));
+
+	return new SemanticTokensLegend(tokenTypesLegend, tokenModifiersLegend);
+})();
+
+interface IParsedToken
+{
+	line: number;
+	startCharacter: number;
+	length: number;
+	tokenType: string;
+	tokenModifiers: string[];
+}
+
+
+class MyDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider
+{
+	private tokens:Tokens;
+
+	constructor(tokens:Tokens)
+	{
+		this.tokens = tokens;
+	}
+
+	async provideDocumentSemanticTokens(doc: TextDocument, _token: CancellationToken): Promise<SemanticTokens>
+	{
+		const allTokens = this.extractToken(doc);
+		const builder = new SemanticTokensBuilder();
+		allTokens.forEach((token) => {
+			builder.push(
+				token.line,
+				token.startCharacter,
+				token.length,
+				this.getTokenTypeId(token.tokenType),
+				this.getTokenModifiersId(token.tokenModifiers)
+			);
+		});
+		return builder.build();
+	}
+
+	private getTokenTypeId(tokenType: string): number
+	{
+		if (tokenTypes.has(tokenType)) {
+			return tokenTypes.get(tokenType)!;
+		}
+		return 0;
+	}
+
+	private getTokenModifiersId(modifiers: string[]): number
+	{
+		let result = 0;
+		for (let i = 0; i < modifiers.length; ++i)
+		{
+			const tokenModifier = modifiers[i];
+			if (tokenModifiers.has(tokenModifier))
+			{
+				result = result | (1 << tokenModifiers.get(tokenModifier)!);
+			}
+		}
+		return result;
+	}
+
+	private extractToken(doc: TextDocument): IParsedToken[]
+	{
+		const r: IParsedToken[] = [];
+		let line = 0;
+		let col = 0;
+		while(true)
+		{
+			let tr = this.tokens.findMatch(doc, line, col);
+			if(tr) {
+				r.push({
+					line: tr.line,
+					startCharacter: tr.character,
+				 	length: tr.length,
+					tokenType: this.tokenType(tr.token.tokenType),
+					tokenModifiers: []
+				});
+				line = tr.line;
+				col = tr.character + tr.length;
+			} else {
+				break;
+			}
+		}
+		return r;
+	}
+
+	private tokenType(tt:TokenType):string {
+		switch(tt) {
+			case TokenType.regionName:
+			case TokenType.characterName:
+			case TokenType.characterTitle:
+			case TokenType.characterSurname:
+			case TokenType.characterFamily:
+			case TokenType.characterDomain:
+			case TokenType.characterClan:
+			case TokenType.characterBaptism:
+				return "class";
+			case TokenType.magicName:
+				return "struct";
+			case TokenType.monsterName:
+				return "enum";
+			case TokenType.animalName:
+			case TokenType.plantName:
+				return "interface";
+			case TokenType.cropName:
+			case TokenType.foodName:
+				return "method";
+		}
+	}
+}
 
 export enum TokenType {
 	regionName = 1,
@@ -201,14 +339,15 @@ interface Uniquenouns {
 	foods: UniquenounsBase[] | undefined;
 }
 
-export function loadUniquenouns(path:string, callback: (tokens: Tokens) => void):void {
-	readFile(path, {encoding:"utf-8", flag:"r"}, (err, data)=>{
-		if(err) {
-			console.log(err.name + ": " + err.message);
-			return;
-		}
-		callback(readUniquenouns(data));
-	});
+const readFilePromise = util.promisify(readFile);
+
+export async function registUniquenouns(path:string): Promise<Disposable> {
+	let data:string = await readFilePromise(path, "utf-8");
+	myTokenProvider = new MyDocumentSemanticTokensProvider(readUniquenouns(data));
+
+	return languages.registerDocumentSemanticTokensProvider(
+			{ language: 'noveltext'}, myTokenProvider, legend
+		);
 }
 
 export function readUniquenouns(data:string):Tokens {
