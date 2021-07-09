@@ -98,7 +98,7 @@ export function activate(context: ExtensionContext)
 	// ルビ抽出（単体）
 	context.subscriptions.push(commands.registerCommand('yumNovelExt.extractRuby', ()=>{
 		const editor = window.activeTextEditor;
-		if (editor)
+		if (editor && editor.document.languageId === 'noveltext')
 		{
 			extractRubyFromDoc(editor.document, path.join(wsBasePath,"ruby.noveldata"));
 		}
@@ -111,16 +111,20 @@ export function activate(context: ExtensionContext)
 
 	context.subscriptions.push(commands.registerCommand('yumNovelExt.export.narou', async () => {
 		try {
-			// 現在のファイルを読み込んで
-			let s:string = window.activeTextEditor.document.getText();
-			s = formatDocument(s, ConvertType.narou);
+			const d = window.activeTextEditor.document;
+			if(d)
+			{
+				// 現在のファイルを読み込んで
+				let s:string = d.getText();
+				s = formatDocument(s, ConvertType.narou);
 
-			// 新規ファイルを作ってぶち込む
-			let doc = await workspace.openTextDocument({language: "noveltext"});
-			await window.showTextDocument(doc);
-			window.activeTextEditor.edit(editBuilder => {
-				editBuilder.insert(new Position(0, 0), s);
-			});
+				// 新規ファイルを作ってぶち込む
+				let doc = await workspace.openTextDocument({language: "noveltext"});
+				await window.showTextDocument(doc);
+				window.activeTextEditor.edit(editBuilder => {
+					editBuilder.insert(new Position(0, 0), s);
+				});
+			}
 		} catch(e) {
 			console.log(e);
 		}
@@ -128,16 +132,20 @@ export function activate(context: ExtensionContext)
 
 	context.subscriptions.push(commands.registerCommand('yumNovelExt.export.kakuyomu', async () => {
 		try {
-			// 現在のファイルを読み込んで
-			let s:string = window.activeTextEditor.document.getText();
-			s = formatDocument(s, ConvertType.kakuyomu);
+			const d = window.activeTextEditor.document;
+			if(d)
+			{
+				// 現在のファイルを読み込んで
+				let s:string = d.getText();
+				s = formatDocument(s, ConvertType.kakuyomu);
 
-			// 新規ファイルを作ってぶち込む
-			let doc = await workspace.openTextDocument({language: "noveltext"});
-			await window.showTextDocument(doc);
-			window.activeTextEditor.edit(editBuilder => {
-				editBuilder.insert(new Position(0, 0), s);
-			});
+				// 新規ファイルを作ってぶち込む
+				let doc = await workspace.openTextDocument({language: "noveltext"});
+				await window.showTextDocument(doc);
+				window.activeTextEditor.edit(editBuilder => {
+					editBuilder.insert(new Position(0, 0), s);
+				});
+			}
 		} catch(e) {
 			console.log(e);
 		}

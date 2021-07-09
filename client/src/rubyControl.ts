@@ -1,11 +1,12 @@
-import * as glob from 'glob';
+import * as globby from 'globby';
 import * as path from 'path';
 import {
 	NoParamCallback,
-	readFile,
+	readFileSync,
 	writeFile
 } from 'fs';
 import { Position, TextDocument, Uri, window, workspace, WorkspaceFolder } from 'vscode';
+import { sync } from 'globby';
 
 function extractRubyFromString(rubys:Map<string,number>, data:string) {
 	let rgx:RegExp = RegExp("[|｜](?!《)[^《]+《[^》]+》", 'g');
@@ -29,8 +30,14 @@ function extractRubyFromString(rubys:Map<string,number>, data:string) {
 function saveRuby(map:Map<string,number>, savePath:string, callback:NoParamCallback): void 
 {
 	let d:string = "";
+	let keys:string[] = [];
 	map.forEach((v, k, m) => {
-		d += k + "\n";
+		keys.push(k.substring(1, k.length));
+	});
+
+	keys.sort();
+	keys.forEach(k => {
+		d += "｜" + k + "\n";
 	});
 	writeFile(savePath, d, callback);
 }
@@ -67,28 +74,32 @@ export function extractRubyFromDoc(doc:TextDocument, savePath:string): void {
 export function extractRubyFromWorkspace(wsf:readonly WorkspaceFolder[], savePath:string): void {
 	let rgx1:RegExp = /^(.*)[/\\]([^/\\]*)$/;
 	let rgx2:RegExp = /^(.*)\.([^.]*)$/;
-	let searchPath = path.join(wsf[0].uri.fsPath, "**", "*.txt");
 	let map:Map<string,number> = new Map();
-	let finishCount: number = 0;
-	glob(searchPath, (err: any, files: any[]) =>
-	{
-		if(!err)
+	let folderCount = 0;
+	let fileAry:string[] = [];
+
+	(async () =>
 		{
-			files.forEach( fn =>
-			{
-				readFile(fn, {encoding:"utf-8"}, (err, data) =>
-				{
-					extractRubyFromString(map, data);
-					++finishCount;
-					if(finishCount === files.length)
-					{
-						saveRuby(map, savePath, () =>
-						{
-							window.showInformationMessage('The extraction of ruby has been completed.');
-						});
-					}
-				});
-			});
+			await Promise.all(
+				wsf.map(async (folder:WorkspaceFolder, i:number, a:WorkspaceFolder[]) => {
+					let searchPath = path.posix.join(folder.uri.fsPath.replace(/\\/g, "/"), "**", "*.txt");
+					let files:string[] = globby.sync(searchPath);
+					fileAry.push(...files);
+				})
+			);
 		}
+	)();
+
+	(async () => {
+		await Promise.all(
+			fileAry.map(async (fn:string, i:number, a:string[]) => {
+				let data:string = readFileSync(fn, {encoding: "utf-8"});
+				extractRubyFromString(map, data);
+			})
+		);
+	})();
+	saveRuby(map, savePath, () =>
+	{
+		window.showInformationMessage('The extraction of ruby has been completed.');
 	});
 }

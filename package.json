@@ -2,10 +2,10 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "extension for novel writing.",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
-	"private": "true",
+	"icon": "icon.png",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/yum-Communication/japanesenovel-vscode-extension.git"
@@ -18,7 +18,11 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onLanguage:noveltext"
+		"onLanguage:noveltext",
+		"onCommand:yumNovelExt.extractRuby",
+		"onCommand:yumNovelExt.extractRubyAll",
+		"onCommand:yumNovelExt.export.narou",
+		"onCommand:yumNovelExt.export.kakuyomu"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
@@ -78,7 +82,7 @@
 						"description": "固有名詞の定義"
 					},
 					"NovelText.formatting.paragraphIndentNum": {
-						"type":"number",
+						"type": "number",
 						"default": "1",
 						"description": "段落のインデントの数",
 						"minimum": 0,
@@ -86,7 +90,7 @@
 						"scope": "resource"
 					},
 					"NovelText.formatting.paragraphIndentType": {
-						"type":"string",
+						"type": "string",
 						"enum": [
 							"半角空白",
 							"全角空白",
@@ -98,7 +102,7 @@
 						"scope": "resource"
 					},
 					"NovelText.formatting.dialogueIndentNum": {
-						"type":"number",
+						"type": "number",
 						"default": "0",
 						"description": "台詞のインデントの数",
 						"minimum": 0,
@@ -106,7 +110,7 @@
 						"scope": "resource"
 					},
 					"NovelText.formatting.dialogueIndentType": {
-						"type":"string",
+						"type": "string",
 						"enum": [
 							"半角空白",
 							"全角空白",
@@ -126,7 +130,7 @@
 						],
 						"default": "そのまま",
 						"description": "台詞末尾の句点",
-						"scope":"resource"
+						"scope": "resource"
 					},
 					"NovelText.formatting.spaceAfterExclamation": {
 						"type": "string",
