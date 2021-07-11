@@ -1,3 +1,4 @@
+import { Stats } from 'fs';
 import * as path from 'path';
 import {
 	commands,
@@ -6,18 +7,10 @@ import {
 	window,
 	workspace
 } from 'vscode';
-import {
-	CharacterCounter,
-	CharacterCounterController
-} from './charcnt';
-import {
-	registUniquenouns
-} from './words';
 
 import {
-	extractRubyFromDoc,
-	extractRubyFromWorkspace
-} from './rubyControl';
+	CharacterCounterController
+} from './charcnt';
 
 import {
 	config
@@ -27,6 +20,18 @@ import {
 	ConvertType,
 	formatDocument
 } from './novelFormatter';
+
+import {
+	extractRubyFromDoc,
+	extractRubyFromWorkspace
+} from './rubyControl';
+
+import { disposeWatch, startWatch, stopWatch } from './watch';
+
+import {
+	registUniquenouns,
+	reloadUniquenouns
+} from './words';
 
 // ワークスペースのベースディレクトリを取得
 function getBaseDir(): string | undefined {
@@ -46,6 +51,22 @@ function getBaseDir(): string | undefined {
 }
 
 
+let uniquenounsFilename:string = "";
+
+/**
+ * 固有名詞設定を再読み込みする。
+ */
+function uniquenounsWatcherCb(eventName:string, filename:string, stats:Stats|undefined): void
+{
+	reloadUniquenouns(filename);
+}
+
+
+
+/**
+ * エクステンションのエントリポイント的な物体。
+ * @param context 
+ */
 export function activate(context: ExtensionContext)
 {
 	let wsBasePath = getBaseDir();
@@ -54,6 +75,20 @@ export function activate(context: ExtensionContext)
 	// 設定が変更されたら読み込みし直すよ
 	context.subscriptions.push(workspace.onDidChangeConfiguration(e => {
 		config.reload();
+		if(config.uniquenouns)
+		{
+			const fn = path.join(wsBasePath, config.uniquenouns);
+			if( fn !== uniquenounsFilename ){
+				// ファイル名が変わっている場合は、元の監視を解く
+				stopWatch(uniquenounsFilename);
+				uniquenounsFilename = fn;
+				// 新しいファイル名で監視を開始
+				startWatch(uniquenounsFilename, uniquenounsWatcherCb);
+			}
+		} else if(uniquenounsFilename){
+			stopWatch(uniquenounsFilename);
+			uniquenounsFilename = "";
+		}
 	}));
 
 	// コマンド登録
@@ -80,23 +115,22 @@ export function activate(context: ExtensionContext)
 	}));
 
 	// 文字数カウント機能。
-	const characterCounter = new CharacterCounter();
-	const controller = new CharacterCounterController(characterCounter);
+	const controller = new CharacterCounterController();
 	context.subscriptions.push(controller);
 
 	// キーワード機能
 	const uniquenouns:string = config.uniquenouns;
 	if(uniquenouns)
 	{
-		(async () => {
-			let d = await registUniquenouns(path.join(wsBasePath, uniquenouns));
-			context.subscriptions.push(d);
-		})();
+		const fn = path.join(wsBasePath, uniquenouns);
+		startWatch(fn, uniquenounsWatcherCb);
+		context.subscriptions.push(...registUniquenouns());
 	}
 }
 
 export function deactivate(): Thenable<void> | undefined
 {
+	disposeWatch();
 	return;
 }
 

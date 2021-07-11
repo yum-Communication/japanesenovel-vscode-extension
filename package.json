@@ -2,10 +2,10 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "extension for novel writing.",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
-	"icon": "icon.png",
+	"icon": "images/icon.png",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/yum-Communication/japanesenovel-vscode-extension.git"
@@ -24,7 +24,7 @@
 		"onCommand:yumNovelExt.export.narou",
 		"onCommand:yumNovelExt.export.kakuyomu"
 	],
-	"main": "./client/out/extension",
+	"main": "./out/extension",
 	"contributes": {
 		"commands": [
 			{
@@ -170,18 +170,150 @@
 					}
 				}
 			}
+		],
+		"semanticTokenModifiers": [
+			{
+				"id": "name",
+				"description": "名前"
+			},
+			{
+				"id": "title",
+				"description": "爵名"
+			},
+			{
+				"id": "surname",
+				"description": "姓"
+			},
+			{
+				"id": "family",
+				"description": "家名"
+			},
+			{
+				"id": "domain",
+				"description": "領地"
+			},
+			{
+				"id": "clan",
+				"description": "クラン"
+			},
+			{
+				"id": "baptism",
+				"description": "洗礼名"
+			},
+			{
+				"id": "nickname",
+				"description": "ニックネーム"
+			}
+		],
+		"semanticTokenTypes": [
+			{
+				"id": "region",
+				"description": "地理"
+			},
+			{
+				"id": "character",
+				"description": "人物"
+			},
+			{
+				"id": "family",
+				"description": "家系"
+			},
+			{
+				"id": "magic",
+				"description": "魔法"
+			},
+			{
+				"id": "monster",
+				"description": "魔物・怪物"
+			},
+			{
+				"id": "animal",
+				"description": "動物"
+			},
+			{
+				"id": "plant",
+				"description": "草木"
+			},
+			{
+				"id": "crop",
+				"description": "作物"
+			},
+			{
+				"id": "food",
+				"description": "食品・料理"
+			}
+		],
+		"semanticTokenScopes": [
+			{
+				"language": "noveltext",
+				"scopes": {
+					"region.name": [
+						"novel.keyword.region.name"
+					],
+					"character.name": [
+						"novel.keyword.character.name"
+					],
+					"character.title": [
+						"novel.keyword.character.title"
+					],
+					"character.surname": [
+						"novel.keyword.character.surname"
+					],
+					"character.family": [
+						"novel.keyword.character.family"
+					],
+					"character.domain": [
+						"novel.keyword.character.domain"
+					],
+					"character.clan": [
+						"novel.keyword.character.clan"
+					],
+					"character.baptism": [
+						"novel.keyword.character.baptism"
+					],
+					"character.nickname": [
+						"novel.keyword.character.nickname"
+					],
+					"family.name": [
+						"novel.keyword.family.name"
+					],
+					"magic.name": [
+						"novel.keyword.magic.name"
+					],
+					"monster.name": [
+						"novel.keyword.monster.name"
+					],
+					"animal.name": [
+						"novel.keyword.animal.name"
+					],
+					"plant.name": [
+						"novel.keyword.plant.name"
+					],
+					"crop.name": [
+						"novel.keyword.crop.name"
+					],
+					"food.name": [
+						"novel.keyword.food.name"
+					]
+				}
+			}
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "cd client && npm install && cd .. && npm run compile",
-		"compile": "tsc -b",
-		"watch": "tsc -b -w",
-		"postinstall": "cd client && npm install && cd ..",
-		"test": "sh ./scripts/e2e.sh"
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -watch -p ./"
+	},
+	"dependencies": {
+		"chokidar": "^3.5.2",
+		"globby": "^11.0.4",
+		"vscode-languageclient": "^7.0.0"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.12.0",
+		"@types/vscode": "^1.56.0",
 		"@typescript-eslint/eslint-plugin": "^4.16.0",
 		"@typescript-eslint/parser": "^4.16.0",
 		"eslint": "^7.21.0",
