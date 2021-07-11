@@ -4,7 +4,7 @@ VSCodeで小説を書く手伝いをするエクステンションです。
 
 各部分で色分けをしたり、ホバー表示や形式変更など、あると小説の執筆がちょっとだけ便利になるでしょう。
 
-![hover](https://github.com/yum-Communication/japanesenovel-vscode-extension/raw/master/images/hover.gif)
+![hover](https://github.com/yum-Communication/japanesenovel-vscode-extension/raw/main/images/hover.gif)
 
 ## ルビの抽出
 コマンドパレットより、`Novel: ルビの抽出（現在のファイル）`を実行することで現在編集中のファイルからルビ設定されている部分を抽出して新規ファイルに出力します。
