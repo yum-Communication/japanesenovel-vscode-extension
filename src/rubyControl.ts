@@ -6,7 +6,6 @@ import {
 	writeFile
 } from 'fs';
 import { Position, TextDocument, Uri, window, workspace, WorkspaceFolder } from 'vscode';
-import { sync } from 'globby';
 
 function extractRubyFromString(rubys:Map<string,number>, data:string) {
 	let rgx:RegExp = RegExp("[|｜](?!《)[^《]+《[^》]+》", 'g');

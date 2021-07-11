@@ -9,9 +9,9 @@ VSCodeで小説を書く手伝いをするエクステンションです。
 ## ルビの抽出
 コマンドパレットより、`Novel: ルビの抽出（現在のファイル）`を実行することで現在編集中のファイルからルビ設定されている部分を抽出して新規ファイルに出力します。
 
-フォルダ内全ての原稿ファイル[^1]を対象にルビを抽出する場合は`Novel: ルビの抽出（全てのファイル）`を使用してください。ruby.noveldata に出力されます。
+フォルダ内全ての原稿ファイルを対象にルビを抽出する場合は`Novel: ルビの抽出（全てのファイル）`を使用してください。ruby.noveldata に出力されます。
 
-[^1]:対象となるファイルは *.txt, *.nvl のみです。
+※ 対象となるファイルは *.txt, *.nvl のみです。
 
 ## 形式の変換
 コマンドパレットより`Novel: 『○○』向けに出力`を実行することで段落のインデント、疑問符・感嘆符の後のスペース、台詞の末尾の句点の一括挿入、削除ができる。二つの違いは、傍点の形式だけです。
@@ -24,12 +24,15 @@ VSCodeで小説を書く手伝いをするエクステンションです。
 ※対象は .txt および .nvl 
 
 設定できる項目は以下の通りです。
+
 |scope|説明|
 |---|---|
 |novel.numerals|数詞（漢数字、算用数字ともに同色）ただし、一桁の漢数字は認識しません。<br>例）5、三百、二〇二一|
 |novel.text.dialogue|台詞<br>先頭が鉤括弧で開始し、末尾が鉤括弧で終了している行です。<br>例）「すべて理解しました！」|
 |novel.text.ruby|ルビ（本体、ルビともに同色）、カクヨム式傍点<br>ルビの形式：<br>｜ルビを振る文字《ルビとなる文字》<br>カクヨム式傍点の形式：<br>《《傍点を振る文字》》|
 |novel.text.katakana|カタカナ|
+|novel.text.kanji|全ての漢字|
+|novel.text.kanji.common|常用漢字|
 |novel.text.punctuation|句読点<br>疑問符や感嘆符も含みます。|
 |novel.keyword.region|地理|
 |novel.keyword.character&#46;name|名前|
@@ -49,28 +52,48 @@ VSCodeで小説を書く手伝いをするエクステンションです。
 ※ novel.keyword... は固有名詞設定した語の色指定用です。
 
 設定例）フォルダ設定の場合 `.vscode/settings.json`
+
+以下では、台詞をピンク、常用漢字を白、非常用漢字を下線付きの黄色、キーワードをオレンジ色にしている。
+
 ```
 {
-    "editor.tokenColorCustomizations": {
-        "textMateRules": [
-            {
-                "scope":"novel.text.dialogue",
-                "settings": {
-                    "foreground": "#ffaaff"
-                }
-            },
-            {
-                "scope":"novel.keyword",
-                "settings": {
-                    "foreground": "#cc8800"
-                }
-            }
-        ]
-    }
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope":"novel.text.dialogue",
+        "settings": {
+          "foreground": "#ffaaff"
+        }
+      },
+      {
+        "scope":"novel.text.kanji",
+        "settings": {
+          "foreground": "#ffffaa",
+          "fontStyle": "underline"
+        }
+      },
+      {
+        "scope":"novel.text.kanji.common",
+        "settings": {
+          "foreground": "#dac0c0",
+          "fontStyle": ""
+        }
+      },
+      {
+        "scope":"novel.keyword",
+        "settings": {
+          "foreground": "#cc8800"
+        }
+      }
+    ]
+  }
 }
 ```
 
 設定例）ワークスペースの場合 `novel-title.code-workspace`
+
+以下では、数字を青に、人名を緑にしている。
+
 ```
 {
   "folders": [
@@ -79,13 +102,13 @@ VSCodeで小説を書く手伝いをするエクステンションです。
     "editor.tokenColorCustomizations": {
       "textMateRules": [
         {
-          "scope":"novel.text.katakana",
+          "scope":"novel.numerals",
           "settings": {
-            "foreground": "#dddd00"
+            "foreground": "#0000ff"
           }
         },
         {
-          "scope":"novel.text.punctuation",
+          "scope":"novel.keyword.character",
           "settings": {
            "foreground": "#008800"
           }
@@ -273,8 +296,6 @@ descriptionの内容はバルーン表示されます。
 
 ※ **rubyとbodyは両方指定することはできません**
 
----
-
 例）
 ```
 {
@@ -304,22 +325,3 @@ descriptionの内容はバルーン表示されます。
   ]
 }
 ```
-
-## Release Notes
-
-## 0.0.7
-- ホバー表示対応
-
-## 0.0.4
-- 細かなバグ修正
-- ルビ抽出のワークスペース対応
-
-## 0.0.3
-- 整形機能
-- カクヨム式傍点のカラーリング対応
-
-## 0.0.2
-- 文字数カウント機能
-- セリフや片仮名など色分け
-- キーワード強調表示
-- ルビの抽出機能
