@@ -2,7 +2,7 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "extension for novel writing.",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
 	"icon": "images/icon.png",

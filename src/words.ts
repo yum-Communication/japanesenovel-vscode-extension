@@ -301,6 +301,7 @@ export class Tokens
 {
 	private a:Token[];
 	private x:Map<string,Token[]>;
+
 	constructor()
 	{
 		this.a = [];
@@ -309,7 +310,7 @@ export class Tokens
 	{
 		if(key)
 		{
-			if(key instanceof Array)
+			if(Array.isArray(key))
 			{
 				key.forEach(s => this.set(s, tokenType, desc));
 				return;
@@ -504,19 +505,27 @@ export function readUniquenouns(data:string):Tokens {
 				nameOrder = u.settings.nameOrder;
 				nameSeparator = u.settings.nameSeparator;
 			}
+
 			const makeFullname = (ch:UniquenounsCharacter):string =>
 			{
 				let o = ch as object;
 				let result = "";
 				for(let i=0; i<nameOrder.length; ++i)
 				{
-					if(o[nameOrder[i]])
+					if(nameOrder[i] in o)
 					{
 						if(i>0)
 						{
 							result += nameSeparator;
 						}
-						result += o[nameOrder[i]];
+						let nmObj = o[nameOrder[i]];
+						if( typeof(nmObj) === 'string' || Array.isArray(nmObj) )
+						{
+							result += nmObj;
+						} else
+						{
+							result += nmObj["base"];
+						}
 					}
 				}
 				return result;
@@ -529,8 +538,15 @@ export function readUniquenouns(data:string):Tokens {
 				{
 					regions.forEach(region =>
 					{
+						let fullname:string = (typeof region.name === 'string') ? region.name : (region.name as UniquenounsName).base;
+						if(region.class)
+						{
+							fullname += region.class;
+						}
 						let desc = region.description === undefined ? "" : region.description;
-						tokens.set(region.name, TokenType.regionName, desc + addDesc);
+						tokens.set(region.name, TokenType.regionName, desc + addDesc, fullname);
+						tokens.set(fullname, TokenType.regionName, desc + addDesc, fullname);
+
 						if(region.child && region.child.length > 0)
 						{
 							let ad = addDesc + "\n - " + region.name;
@@ -587,7 +603,7 @@ export function readUniquenouns(data:string):Tokens {
 					if(family.peerage)
 					{
 						tokens.set(family.name + family.peerage, TokenType.familyName, d + desc);
-						d = "**階級**: " + family.faction + "\n\n" + d;
+						d = "**階級**: " + family.peerage + "\n\n" + d;
 					}
 					d += desc;
 					tokens.set(family.name, TokenType.familyName, d);
