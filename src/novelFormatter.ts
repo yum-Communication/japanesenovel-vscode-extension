@@ -115,6 +115,7 @@ function addPeriodAtEndOfDialogue(): NovelFormatter
 	 const emphasisMark = "《" + config.format.emphasisMark.substr(0, 1) + "》";
 	 return (row:string) => {
 		const rgx = /《《([^《》]+)》》/g;
+		const rgx2 = /[\u3099\u309a]|[\uDB40][\udd00-\uddef]|[\uFE00-\uFE0f]/;
 
 		let m:RegExpExecArray;
 		let replArray:string[][] = [];
@@ -126,7 +127,7 @@ function addPeriodAtEndOfDialogue(): NovelFormatter
 			// 二文字を無理矢理一文字にする
 			for(let i=0; i<b.length; ++i)
 			{
-				if( b[i] === "゙" || b[i] === "゚" )
+				if(rgx2.test(b[i]))
 				{
 					a[a.length-1] += b[i];
 				} else {
@@ -153,7 +154,8 @@ function addPeriodAtEndOfDialogue(): NovelFormatter
   */
  function emphasisToKakuyomu(): NovelFormatter
  {
-	const rgx1 = /[|｜](.|[ぁあぃいぅぇえぉおっなにぬねのまみむめもゃやゅゆょよらりるれろゎわゐゑをんゕゖァアィイゥェエォオッナニヌネノマミムメモャヤュユョヨラリルレロヮワヰヱヲンヵヶ][\u3099\u309a]|[\uD800-\uDBFF][\uDC00-\uDFFF])《[・●○﹅﹆]》/g;
+	//（通常単独文字 or サロゲートペア）＋（濁点・半濁点合成 or 異字体セレクタ）
+	const rgx1 = /[|｜](([\u0000-\ud7ff\uf000-\uffff]|[\ud800-\udbff][\udc00-\udfff])([\u3099\u309a]|[\udb40][\udd00-\uddef]|[\ufe00-\ufe0f])?)《[・●○﹅﹆]》/g;
 	const rgx2 = /》》《《/g;
 	return (row:string) => {
 		return row.replace(rgx1, "《《$1》》").replace(rgx2, "");

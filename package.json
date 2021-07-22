@@ -2,7 +2,7 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "extension for novel writing.",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
 	"icon": "images/icon.png",
@@ -52,6 +52,22 @@
 				"category": "Novel"
 			}
 		],
+		"menus": {
+			"editor/context": [
+				{
+					"command": "yumNovelExt.export.narou",
+					"alt": "yumNovelExt.export.narou",
+					"group": "yumNovel",
+					"when": "editorLangId == noveltext"
+				},
+				{
+					"command": "yumNovelExt.export.kakuyomu",
+					"alt": "yumNovelExt.export.kakuyomu",
+					"group": "yumNovel",
+					"when": "editorLangId == noveltext"
+				}
+			]
+		},
 		"languages": [
 			{
 				"id": "noveltext",

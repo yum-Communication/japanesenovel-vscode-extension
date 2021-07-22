@@ -78,7 +78,8 @@ export class CharacterCounterController {
 	{
 		// 合成文字には対応しない。
 		const s = editor.document.getText()
-				.replace(/\s/g, '')				// すべての空白文字
+				.replace(/\s/g, '')				// すべての空白文字はカウント対象としない
+				.replace(/[\uDB40][\udd00-\uddef]|[\uFE00-\uFE0f]/g, '') // 異字体セレクタもカウント対象外
 				.replace(/[|｜]{2}/g, '#')		// ルビの開始ではないので、適当に置換する
 				.replace(/[|｜]《/g, '#')		// ルビの開始ではないので、適当に置換する
 				.replace(/《《([^《》]+)》》/g, '$1')		// カクヨム傍点の剥がし処理
