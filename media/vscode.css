@@ -1,0 +1,305 @@
+:root {
+	--container-padding: 20px;
+	--input-padding-vertical: 6px;
+	--input-padding-horizontal: 4px;
+	--input-margin-vertical: 4px;
+	--input-margin-horizontal: 0;
+}
+
+div#scroll-left,
+div#scroll-right
+{
+	fill: var(--vscode-editor-background);
+}
+
+body {
+	padding: 0 var(--container-padding);
+	color: var(--vscode-foreground);
+	font-size:18pt;
+	font-family: serif-ja-v, serif-ja, serif;;
+	background-color: var(--vscode-editor-background);
+
+	vertical-align: baseline;
+	line-height:    2;
+	background:     transparent;
+
+	word-spacing:   normal;
+	letter-spacing: normal;
+	white-space:    normal;
+	word-wrap:      break-word;
+	text-align:     justify;
+}
+
+ol,
+ul {
+	padding-left: var(--container-padding);
+}
+
+body > *,
+form > * {
+	margin-block-start: var(--input-margin-vertical);
+	margin-block-end: var(--input-margin-vertical);
+}
+
+*:focus {
+	outline-color: var(--vscode-focusBorder) !important;
+}
+
+a {
+	color: var(--vscode-textLink-foreground);
+}
+
+a:hover,
+a:active {
+	color: var(--vscode-textLink-activeForeground);
+}
+
+code {
+	font-size: var(--vscode-editor-font-size);
+	font-family: var(--vscode-editor-font-family);
+}
+
+div,p {
+  display: block;
+  width:   auto;
+  height:  auto;
+  margin:  0;
+  padding: 0;
+}
+body,div,p {
+  text-indent: 0;
+}
+
+body > p,
+div  > p {
+  text-indent: inherit;
+}
+h1,h2,h3,h4,h5,h6 {
+  display:     block;
+  margin:      0;
+  padding:     0;
+  font-size:   100%;
+  font-weight: inherit;
+  background:  transparent;
+}
+
+.vrtl {
+  -webkit-writing-mode: vertical-rl;
+  -epub-writing-mode:   vertical-rl;
+  writing-mode: vertical-rl;
+}
+
+html {
+  font-family: serif-ja, serif;
+}
+
+
+
+
+.vrtl h1,
+.vrtl h2,
+.vrtl h3,
+.vrtl h4,
+.vrtl h5,
+.vrtl h6 {
+  font-family: sans-serif-ja-v, sans-serif-ja, sans-serif;
+  margin: 1.5em 2em;
+}
+
+.vrtl a {
+}
+
+/* 基本設定（上：横組み　下：縦組み） */
+/* 訪問済みリンク */
+a:visited {
+}
+/* マウスオーバー時 */
+a:hover {
+}
+/* フォーカス時 */
+a:focus {
+}
+/* アクティブ時 */
+a:active {
+}
+
+/* 扉見出し */
+.vrtl .tobira-midashi {
+}
+/* 大見出し */
+.vrtl .oo-midashi {
+}
+/* 中見出し */
+.vrtl .naka-midashi {
+}
+/* 小見出し */
+.vrtl .ko-midashi {
+}
+
+/* カバーページ
+----------------------------------------------------------------
+描画領域の余白をゼロに
+デフォルトで左右中央揃えに
+---------------------------------------------------------------- */
+body.p-cover {
+  margin:     0;
+  padding:    0;
+  text-align: center;
+}
+body.p-cover .main {
+}
+
+/* 画像のみのページ
+----------------------------------------------------------------
+描画領域の余白をゼロに
+デフォルトで左右中央揃えに
+---------------------------------------------------------------- */
+body.p-image {
+  margin:     0;
+  padding:    0;
+  text-align: center;
+}
+body.p-image .main {
+}
+
+/* テキスト中心のページ
+---------------------------------------------------------------- */
+body.p-text {
+}
+body.p-text .main {
+}
+
+
+/* 本扉ページ
+---------------------------------------------------------------- */
+body.p-titlepage {
+}
+body.p-titlepage .main {
+}
+
+
+/* 奥付ページ
+---------------------------------------------------------------- */
+body.p-colophon {
+}
+body.p-colophon .main {
+}
+
+
+/* 目次ページ
+---------------------------------------------------------------- */
+body.p-toc {
+}
+body.p-toc .main {
+}
+
+
+/* 縦中横
+---------------------------------------------------------------- */
+.tcy {
+  -webkit-text-combine:         horizontal;
+  -webkit-text-combine-upright: all;
+  text-combine-upright:         all;
+  -epub-text-combine:           horizontal;
+}
+
+
+/* 圏点・傍点
+---------------------------------------------------------------- */
+.em-sesame {
+  -webkit-text-emphasis-style: filled sesame;
+  -epub-text-emphasis-style:   filled sesame;
+  text-emphasis-style:         filled sesame;
+}
+.em-sesame-open {
+  -webkit-text-emphasis-style: open sesame;
+  -epub-text-emphasis-style:   open sesame;
+  text-emphasis-style:         open sesame;
+}
+.em-dot {
+  -webkit-text-emphasis-style: filled dot;
+  -epub-text-emphasis-style:   filled dot;
+  text-emphasis-style:         filled dot;
+}
+.em-dot-open {
+  -webkit-text-emphasis-style: open dot;
+  -epub-text-emphasis-style:   open dot;
+  text-emphasis-style:         open dot;
+}
+.em-circle {
+  -webkit-text-emphasis-style: filled circle;
+  -epub-text-emphasis-style:   filled circle;
+  text-emphasis-style:         filled circle;
+}
+.em-circle-open {
+  -webkit-text-emphasis-style: open circle;
+  -epub-text-emphasis-style:   open circle;
+  text-emphasis-style:         open circle;
+}
+.em-double-circle {
+  -webkit-text-emphasis-style: filled double-circle;
+  -epub-text-emphasis-style:   filled double-circle;
+}
+.em-double-circle-open {
+  -webkit-text-emphasis-style: open double-circle;
+  -epub-text-emphasis-style:   open double-circle;
+}
+.em-triangle {
+  -webkit-text-emphasis-style: filled triangle;
+  -epub-text-emphasis-style:   filled triangle;
+}
+.em-triangle-open {
+  -webkit-text-emphasis-style: open triangle;
+  -epub-text-emphasis-style:   open triangle;
+}
+
+
+/* 行頭インデント
+---------------------------------------------------------------- */
+.indent-0,
+.indent-0em  { text-indent:  0;   }
+.indent-0em5 { text-indent:  0.5em; }
+.indent-1em  { text-indent:  1em; }
+.indent-1em5 { text-indent:  1.5em; }
+.indent-2em  { text-indent:  2em; }
+.indent-2em5 { text-indent:  2.5em; }
+.indent-3em  { text-indent:  3em; }
+.indent-3em5 { text-indent:  3.5em; }
+.indent-4em  { text-indent:  4em; }
+.indent-4em5 { text-indent:  4.5em; }
+.indent-5em  { text-indent:  5em; }
+.indent-6em  { text-indent:  6em; }
+.indent-7em  { text-indent:  7em; }
+.indent-8em  { text-indent:  8em; }
+.indent-9em  { text-indent:  9em; }
+
+rt { font-size:7pt; }
+
+#scroll-left,
+#scroll-right
+{
+	height:100%;
+	width:3em;
+	align:center;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}
+
+#scroll-right > svg,
+#scroll-left > svg
+{
+	width:32px;
+}
+
+#scroll-left:hover,
+#scroll-right:hover
+{
+	background-color:#cccccc;
+}
+
+body.p-text>div.main
+{
+	overflow:hidden;
+	margin: auto;
+}

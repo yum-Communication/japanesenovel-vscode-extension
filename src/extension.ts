@@ -2,6 +2,7 @@ import { Stats } from 'fs';
 import * as path from 'path';
 import {
 	commands,
+	Disposable,
 	ExtensionContext,
 	Position,
 	window,
@@ -15,11 +16,16 @@ import {
 import {
 	config
 } from './config';
+import { ActiveEditorController } from './EditorController';
 
 import {
 	ConvertType,
 	formatDocument
 } from './novelFormatter';
+
+import {
+	NovelPreviewPanel
+} from './novelPreview';
 
 import {
 	extractRubyFromDoc,
@@ -62,7 +68,6 @@ function uniquenounsWatcherCb(eventName:string, filename:string, stats:Stats|und
 }
 
 
-
 /**
  * エクステンションのエントリポイント的な物体。
  * @param context 
@@ -92,6 +97,7 @@ export function activate(context: ExtensionContext)
 	}));
 
 	// コマンド登録
+
 	// ルビ抽出（単体）
 	context.subscriptions.push(commands.registerCommand('yumNovelExt.extractRuby', ()=>{
 		const editor = window.activeTextEditor;
@@ -114,9 +120,19 @@ export function activate(context: ExtensionContext)
 		await exportNovel(ConvertType.kakuyomu);
 	}));
 
+	const aeController = new ActiveEditorController();
+	context.subscriptions.push(aeController);
+
 	// 文字数カウント機能。
-	const controller = new CharacterCounterController();
+	const controller = new CharacterCounterController(aeController);
 	context.subscriptions.push(controller);
+
+	// プレビュー表示
+	context.subscriptions.push(
+		commands.registerCommand('yumNovelExt.preview', () => {
+			NovelPreviewPanel.show(context.extensionUri, aeController);
+		})
+	);
 
 	// キーワード機能
 	const uniquenouns:string = config.uniquenouns;

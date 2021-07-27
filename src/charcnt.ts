@@ -3,71 +3,64 @@ import {
 	StatusBarItem,
 	StatusBarAlignment,
 	window,
-	TextEditor,
-	TextEditorSelectionChangeEvent
+	TextEditor
 } from 'vscode';
+
+import {
+	ActiveEditorController,
+	EditorEvent
+} from './EditorController';
 
 export class CharacterCounterController {
 	private disposable: Disposable;
 	private item!: StatusBarItem;
-	private version: number;
-	private filePath: string;
 
-	constructor() {
+	constructor(aec:ActiveEditorController) {
 		this.item = window.createStatusBarItem(StatusBarAlignment.Left);
-		const subscriptions: Disposable[] = [];
-		window.onDidChangeTextEditorSelection(this.doChangeSelection, this, subscriptions);
-		window.onDidChangeActiveTextEditor(this.doChangeEditorEvent, this, subscriptions);
 
-		this.disposable = Disposable.from(...subscriptions);
+		const d: Disposable[] = [];
+		aec.onEditorActive(this.onEditorActive, this, d);
+		aec.onDocumentChanged(this.onDocumentChanged, this, d);
+		this.disposable = Disposable.from(...d);
 
 		const e = window.activeTextEditor;
 		if(e)
 		{
-			this.setEditor(e);
 			this.doCount(e);
 			this.item.show();
 		}
 	}
 
-	/**
-	 * 破棄メソッドが重要。
-	 */
 	public dispose() {
 		this.disposable.dispose();
 	}
 
-	private setEditor(editor:TextEditor):void
+	/**
+	 * エディタがアクティブになった時のイベント
+	 * @param eve 
+	 */
+	private onEditorActive(eve:EditorEvent):void
 	{
-		const d = editor.document;
-		this.filePath = d.uri.fsPath;
-		this.version = d.version;
-	}
-
-	private doChangeEditorEvent(editor:TextEditor | undefined)
-	{
-		// .txt, .nvl 以外は文字数カウントは非表示。
-		if (!editor || editor.document.languageId !== 'noveltext')
+		if (eve.isTargetType)
 		{
-			this.item.hide();
+			if (eve.isDocumentChanged)
+			{
+				this.doCount(eve.editor);
+			}
+			this.item.show();
 		} else
 		{
-			// カウント対象のドキュメントのパスとバージョンを保存しておく
-			this.setEditor(editor);
-			this.doCount(editor);
-			this.item.show();
+			this.item.hide();
 		}
 	}
 
-	private doChangeSelection(s:TextEditorSelectionChangeEvent)
+	/**
+	 * アクティブエディタのドキュメントが変更されたときのイベント
+	 * @param eve 
+	 */
+	 private onDocumentChanged(eve:EditorEvent):void
 	{
-		const e = s.textEditor;
-		// 前回のカウントとドキュメントバージョンが変わっていたらカウントしなおし。
-		if(e.document.version !== this.version || e.document.uri.fsPath !== this.filePath)
-		{
-			this.setEditor(e);
-			this.doCount(e);
-		}
+		this.doCount(eve.editor);
 	}
 
 	/**
@@ -80,10 +73,9 @@ export class CharacterCounterController {
 		const s = editor.document.getText()
 				.replace(/\s/g, '')				// すべての空白文字はカウント対象としない
 				.replace(/[\uDB40][\udd00-\uddef]|[\uFE00-\uFE0f]/g, '') // 異字体セレクタもカウント対象外
-				.replace(/[|｜]{2}/g, '#')		// ルビの開始ではないので、適当に置換する
+				.replace(/(?<![|｜])《《([^《》]+)》》/g, '$1')		// カクヨム傍点の剥がし処理
+				.replace(/[|｜]([^|｜《》]+)《[^|｜《》]+》/g, '$1')    // ルビを親語だけにする
 				.replace(/[|｜]《/g, '#')		// ルビの開始ではないので、適当に置換する
-				.replace(/《《([^《》]+)》》/g, '$1')		// カクヨム傍点の剥がし処理
-				.replace(/[|｜](?!《)([^《]+)《[^》]+》/g, '$1')    // ルビを親語だけにする
 			;
 		let cnt = (s !== "") ? Array.from(s).length: 0;
 		this.item.text = Intl.NumberFormat().format(cnt) + " 文字";

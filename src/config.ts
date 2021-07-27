@@ -21,6 +21,12 @@ export interface NovelExtFormatConfig
 	emphasisMark:string;
 }
 
+export interface PreviewConfig
+{
+	height:number;
+	fontSize:number;
+}
+
 export class NovelExtConfig
 {
 	/**
@@ -28,6 +34,7 @@ export class NovelExtConfig
 	 */
 	uniquenouns:string;
 	format:NovelExtFormatConfig;
+	preview:PreviewConfig;
 
 	constructor() {
 		this.format = {
@@ -43,6 +50,11 @@ export class NovelExtConfig
 			spaceAfterExclamationType: "全角空白",
 
 			emphasisMark: "﹅ 黒ゴマ"
+		};
+		this.preview =
+		{
+			height: 40,
+			fontSize: 18
 		};
 	}
 
@@ -62,6 +74,9 @@ export class NovelExtConfig
 		this.format.spaceAfterExclamation = conf.get<string>("formatting.spaceAfterExclamation");
 		this.format.spaceAfterExclamationType = conf.get<string>("formatting.spaceAfterExclamationType");
 		this.format.emphasisMark = conf.get<string>("formatting.emphasisMark");
+
+		this.preview.height = conf.get<number>("preview.height");
+		this.preview.fontSize = conf.get<number>("preview.fontSize");
 	}
 }
 

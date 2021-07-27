@@ -2,7 +2,7 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "extension for novel writing.",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
 	"icon": "images/icon.png",
@@ -27,6 +27,12 @@
 	"main": "./out/main",
 	"contributes": {
 		"commands": [
+			{
+				"command": "yumNovelExt.preview",
+				"title": "縦書きプレビュー",
+				"shortTitle": "vertical preview",
+				"category": "Novel"
+			},
 			{
 				"command": "yumNovelExt.extractRuby",
 				"title": "ルビの抽出（現在のファイル）",
@@ -182,6 +188,22 @@
 						],
 						"default": "﹅ 黒ゴマ",
 						"description": "傍点（圏点）に使用するマーク",
+						"scope": "resource"
+					},
+					"NovelText.preview.height": {
+						"type":"number",
+						"default": "40",
+						"description": "プレビューの一行の文字数",
+						"minimum": 10,
+						"maximum": 99,
+						"scope": "resource"
+					},
+					"NovelText.preview.fontSize": {
+						"type":"number",
+						"default": "18",
+						"description": "プレビューのフォントサイズ",
+						"minimum": 10,
+						"maximum": 32,
 						"scope": "resource"
 					}
 				}
