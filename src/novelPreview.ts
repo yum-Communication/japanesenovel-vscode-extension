@@ -1,12 +1,13 @@
 import {
 	Disposable,
 	window,
-	TextEditor,
 	WebviewPanel,
 	Uri,
 	Webview,
 	WebviewOptions,
-	ViewColumn
+	ViewColumn,
+	Diagnostic,
+	languages
 } from 'vscode';
 
 import {
@@ -17,8 +18,13 @@ import {
 	ActiveEditorController,
 	EditorEvent
 } from './EditorController';
-import { ConvertType, formatDocument } from './novelFormatter';
+import {
+	ConvertType,
+	validateDocument,
+	formatDocument
+} from './novelFormatter';
 
+export const diagnosticColl = languages.createDiagnosticCollection("novelLint");
 
 
 function getWebviewOptions(extensionUri: Uri): WebviewOptions {
@@ -150,7 +156,7 @@ export class NovelPreviewPanel {
 					{
 						const text = window.activeTextEditor.document.getText();
 						const title = this._getTitle(text);
-						const html = this._getContents(text);
+						const html = this._getContents(text, window.activeTextEditor.document.uri);
 						try
 						{
 							this._panel.title = title;
@@ -160,7 +166,16 @@ export class NovelPreviewPanel {
 						}
 						try
 						{
-							this._panel.webview.html = this.htmlForWebview(this._panel.webview, html, title);
+							if (html === false)
+							{
+								if (this._panel.webview.html.length === 0)
+								{
+									this._panel.webview.html = "<p style=\"white-space:pre;\">" + text + "</p>";
+								}
+							} else if (html !== true)
+							{
+								this._panel.webview.html = this.htmlForWebview(this._panel.webview, html, title);
+							}
 						}catch(exc)
 						{
 							console.log(exc);
@@ -223,8 +238,17 @@ ${contents}
 		return m[0];
 	}
 
-	private _getContents(text:string): string
+	private _getContents(text:string, uri:Uri): string|boolean
 	{
+		const diagnostics: Diagnostic[] = [];
+		let a:string[] = text.split("\n");
+		validateDocument(a, diagnostics);
+		diagnosticColl.set(uri, diagnostics);
+		if (diagnostics.length > 0)
+		{
+			return false;
+		}
+
 		// 改行コードは\nにする
 		// 1行目および頭の連続する空行を除去
 		// 連続する改行を一つずつ除去
@@ -234,61 +258,7 @@ ${contents}
 					.replace(/(?<![\n」])\n(?![\n「])/g, "")
 					.replace(/(?<!\n)(\n+)\n(?!\n)/g, "$1");
 
-		const dialogueIndentNum = config.format.dialogueIndentNum;
-		const paragraphIndentNum = config.format.paragraphIndentNum;
-
-		config.format.dialogueIndentNum = 0;
-		config.format.paragraphIndentNum = 0;
-
-		// 暫定：『なろう』式で変換
-		s = formatDocument(s, ConvertType.narou);
-
-		config.format.dialogueIndentNum = dialogueIndentNum;
-		config.format.paragraphIndentNum = paragraphIndentNum;
-
-		let getIndent = (type:string, num:number):string =>
-		{
-			let ic = 0.5;
-			switch(type)
-			{
-				case "全角空白":
-					ic = 1;
-					break;
-				case "タブ":
-					ic = 2;
-					break;
-				case "EM SP":
-					ic = 1;
-					break;
-			}
-			const x = (ic * num);
-			const y = Math.floor(x);
-			const z = (x-y)*10;
-			return y + "em" + (z !== 0 ? z: "");
-		};
-	
-		const pD = '<p class="indent-' + getIndent(config.format.dialogueIndentType, dialogueIndentNum) + '">';
-		const pP = '<p class="indent-' + getIndent(config.format.paragraphIndentType, paragraphIndentNum) + '">';
-		const rgx = /^「.+」$/;
-		let ary:string[] = s.split("\n");
-		let result:string[] = [];
-		ary.forEach(row =>{
-			const isDialogue = rgx.test(row);
-
-			let tmp = "";
-			if(row.length > 0)
-			{
-				tmp = row.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
-						.replace(/[|｜]([^|｜《》]+)《([^|｜《》]+)》/g, "<ruby>$1<rt>$2</rt></ruby>")
-						.replace(/[|｜]《/g, "《")
-				;
-			} else
-			{
-				tmp = "<p><br></p>";
-			}
-			result.push((isDialogue?pD:pP) + tmp + "</p>");
-		});
-		return result.join("\n");
+		return formatDocument(s.split("\n"), ConvertType.html, diagnostics);
 	}
 }
 

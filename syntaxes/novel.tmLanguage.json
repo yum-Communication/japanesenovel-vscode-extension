@@ -17,7 +17,6 @@
 				{ "include": "#ruby" },
 				{ "include": "#emphasis" },
 				{ "include": "#kanji" },
-				{ "include": "#punctuation-symbol-invalid" },
 				{ "include": "#dialogue" }
 			]
 		},
@@ -42,10 +41,6 @@
 		"punctuation-symbol": {
 			"name": "novel.text.punctuation.symbol",
 			"match": "([！？]+|[!?]+|[⁇⁈⁉])(?=\\s|[）」』])"
-		},
-		"punctuation-symbol-invalid": {
-			"name": "novel.invalid",
-			"match": "([！？]+|[!?]+|[⁇⁈⁉])(?!\\s|[）」』])"
 		},
 		"numerals" : {
 			"patterns": [

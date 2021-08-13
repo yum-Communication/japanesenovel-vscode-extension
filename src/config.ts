@@ -20,6 +20,13 @@ export interface NovelExtFormatConfig
 	/** 傍点（圏点）に使用するマーク */
 	emphasisMark:string;
 }
+export interface NovelExtWritingConfig
+{
+	/** 短縮形式のルビを原稿中に使うか */
+	useShortRuby:boolean;
+	/** 丸括弧でのルビ（短縮形式）を原稿中に使うか */
+	useParenthesesRuby:boolean;
+}
 
 export interface PreviewConfig
 {
@@ -35,6 +42,7 @@ export class NovelExtConfig
 	uniquenouns:string;
 	format:NovelExtFormatConfig;
 	preview:PreviewConfig;
+	writing:NovelExtWritingConfig;
 
 	constructor() {
 		this.format = {
@@ -49,8 +57,14 @@ export class NovelExtConfig
 			spaceAfterExclamation: "追加",
 			spaceAfterExclamationType: "全角空白",
 
-			emphasisMark: "﹅ 黒ゴマ"
+			emphasisMark: "﹅ 黒ゴマ",
 		};
+
+		this.writing = {
+			useShortRuby:false,
+			useParenthesesRuby: false
+		};
+
 		this.preview =
 		{
 			height: 40,
@@ -77,6 +91,9 @@ export class NovelExtConfig
 
 		this.preview.height = conf.get<number>("preview.height");
 		this.preview.fontSize = conf.get<number>("preview.fontSize");
+
+		this.writing.useShortRuby = conf.get<boolean>("writing.useShortRuby");
+		this.writing.useParenthesesRuby = conf.get<boolean>("writing.useParenthesesRuby");
 	}
 }
 

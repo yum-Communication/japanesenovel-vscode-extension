@@ -1,8 +1,8 @@
 {
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
-	"description": "extension for novel writing.",
-	"version": "0.0.11",
+	"description": "VS Codeで小説を書こう！ Web小説執筆べんり機能",
+	"version": "0.1.0",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
 	"icon": "images/icon.png",
@@ -190,8 +190,20 @@
 						"description": "傍点（圏点）に使用するマーク",
 						"scope": "resource"
 					},
+					"NovelText.writing.useShortRuby": {
+						"type": "boolean",
+						"default": false,
+						"description": "原稿で短縮形式のルビを使うか",
+						"scope": "resource"
+					},
+					"NovelText.writing.useParenthesesRuby": {
+						"type": "boolean",
+						"default": false,
+						"description": "原稿で丸括弧でのルビ（短縮形式）を使うか",
+						"scope": "resource"
+					},
 					"NovelText.preview.height": {
-						"type":"number",
+						"type": "number",
 						"default": "40",
 						"description": "プレビューの一行の文字数",
 						"minimum": 10,
@@ -199,7 +211,7 @@
 						"scope": "resource"
 					},
 					"NovelText.preview.fontSize": {
-						"type":"number",
+						"type": "number",
 						"default": "18",
 						"description": "プレビューのフォントサイズ",
 						"minimum": 10,

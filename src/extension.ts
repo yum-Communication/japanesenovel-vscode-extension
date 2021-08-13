@@ -2,7 +2,7 @@ import { Stats } from 'fs';
 import * as path from 'path';
 import {
 	commands,
-	Disposable,
+	Diagnostic,
 	ExtensionContext,
 	Position,
 	window,
@@ -24,6 +24,7 @@ import {
 } from './novelFormatter';
 
 import {
+	diagnosticColl,
 	NovelPreviewPanel
 } from './novelPreview';
 
@@ -158,18 +159,25 @@ async function exportNovel(convertType:ConvertType):Promise<void>
 		try
 		{
 			const d = window.activeTextEditor.document;
+			const diagnostics: Diagnostic[] = [];
+
 			if (d)
 			{
 				// 現在のファイルを読み込んで
 				let s: string = d.getText();
-				s = formatDocument(s, convertType);
+				s = formatDocument(s.split("\n"), convertType, diagnostics);
 
-				// 新規ファイルを作ってぶち込む
-				let doc = await workspace.openTextDocument({ language: "noveltext" });
-				await window.showTextDocument(doc);
-				window.activeTextEditor.edit(editBuilder => {
-					editBuilder.insert(new Position(0, 0), s);
-				});
+				diagnosticColl.set(d.uri, diagnostics);
+				if (diagnostics.length === 0)
+				{
+					diagnosticColl.set(d.uri,diagnostics);
+					// 新規ファイルを作ってぶち込む
+					let doc = await workspace.openTextDocument({ language: "noveltext" });
+					await window.showTextDocument(doc);
+					window.activeTextEditor.edit(editBuilder => {
+						editBuilder.insert(new Position(0, 0), s);
+					});
+				}
 			}
 		} catch (e)
 		{
