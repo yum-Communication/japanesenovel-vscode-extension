@@ -117,8 +117,12 @@ export function activate(context: ExtensionContext)
 		exportNovel(ConvertType.narou);
 	}));
 
-	context.subscriptions.push(commands.registerCommand('yumNovelExt.export.kakuyomu', async () => {
-		await exportNovel(ConvertType.kakuyomu);
+	context.subscriptions.push(commands.registerCommand('yumNovelExt.export.kakuyomu', () => {
+		exportNovel(ConvertType.kakuyomu);
+	}));
+
+	context.subscriptions.push(commands.registerCommand('yumNovelExt.export.epub', () => {
+		exportNovel(ConvertType.html);
 	}));
 
 	const aeController = new ActiveEditorController();
@@ -151,6 +155,18 @@ export function deactivate(): Thenable<void> | undefined
 	return;
 }
 
+const _getTitle = (text:String): string =>
+{
+	// 1行目を取り出す
+	var m = text.match(/[^\r\n]+/);
+	const x = /[^ \t　]+\s(.+)/;
+	var n = m[0].match(/[^ \t　]+\s(.+)/);
+	if(n)
+	{
+		return n[1];
+	}
+	return m[0];
+};
 
 async function exportNovel(convertType:ConvertType):Promise<void>
 {
@@ -165,14 +181,41 @@ async function exportNovel(convertType:ConvertType):Promise<void>
 			{
 				// 現在のファイルを読み込んで
 				let s: string = d.getText();
+				let title = '';
+
+				if(convertType === ConvertType.html) {
+					title = _getTitle(s);
+					s = s.replace(/\r\n/g, "\n")
+						.replace(/\r/g, "\n")
+						.replace(/^[^\n]+[\n]+/, "")
+						.replace(/(?<![\n」])\n(?![\n「])/g, "")
+						.replace(/(?<!\n)(\n+)\n(?!\n)/g, "$1");
+				}
 				s = formatDocument(s.split("\n"), convertType, diagnostics);
+				if(convertType === ConvertType.html) {
+					s = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja" class="vrtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" type="text/css" href="../style/book-style.css"/>
+<title>${title}</title>
+</head>
+<body class="p-text">
+<div id="main-contents" class="main">
+<h2 id="toc-001">${title}</h2>
+${s}
+</div>
+</body></html>`;
+				}
 
 				diagnosticColl.set(d.uri, diagnostics);
 				if (diagnostics.length === 0)
 				{
 					diagnosticColl.set(d.uri,diagnostics);
 					// 新規ファイルを作ってぶち込む
-					let doc = await workspace.openTextDocument({ language: "noveltext" });
+					let doc = await workspace.openTextDocument({ language: (convertType===ConvertType.html ? 'html': 'noveltext') });
 					await window.showTextDocument(doc);
 					window.activeTextEditor.edit(editBuilder => {
 						editBuilder.insert(new Position(0, 0), s);

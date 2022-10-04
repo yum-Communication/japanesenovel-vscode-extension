@@ -1,0 +1,8 @@
+{
+    "yumNovelExt_preview": "縦書きプレビュー",
+    "yumNovelExt_extractRuby": "ルビの抽出（現在のファイル）",
+    "yumNovelExt_extractRubyAll": "ルビの抽出（全てのファイル）",
+    "yumNovelExt_export_narou": "『小説家になろう』向けに出力",
+    "yumNovelExt_export_kakuyomu": "『カクヨム』向けに出力",
+    "yumNovelExt_export_epub": "『EPUB』向けに出力"
+}

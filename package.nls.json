@@ -1,0 +1,8 @@
+{
+    "yumNovelExt_preview": "vertical writing preview",
+    "yumNovelExt_extractRuby": "ruby extraction (current file)",
+    "yumNovelExt_extractRubyAll": "ruby extraction (all files)",
+    "yumNovelExt_export_narou": "export for NAROU",
+    "yumNovelExt_export_kakuyomu": "export for KAKUYOMU",
+    "yumNovelExt_export_epub": "export for EPUB"
+}

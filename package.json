@@ -2,7 +2,7 @@
 	"name": "yum-novel-ext",
 	"displayName": "yumNovelExt",
 	"description": "VS Codeで小説を書こう！ Web小説執筆べんり機能",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"publisher": "yumCommunication",
 	"license": "Apache-2.0",
 	"icon": "images/icon.png",
@@ -29,32 +29,38 @@
 		"commands": [
 			{
 				"command": "yumNovelExt.preview",
-				"title": "縦書きプレビュー",
+				"title": "%yumNovelExt_preview%",
 				"shortTitle": "vertical preview",
 				"category": "Novel"
 			},
 			{
 				"command": "yumNovelExt.extractRuby",
-				"title": "ルビの抽出（現在のファイル）",
+				"title": "%yumNovelExt_extractRuby%",
 				"shortTitle": "Extraction ruby",
 				"category": "Novel"
 			},
 			{
 				"command": "yumNovelExt.extractRubyAll",
-				"title": "ルビの抽出（全てのファイル）",
+				"title": "%yumNovelExt_extractRubyAll%",
 				"shortTitle": "Extraction ruby all",
 				"category": "Novel"
 			},
 			{
 				"command": "yumNovelExt.export.narou",
-				"title": "『小説家になろう』向けに出力",
+				"title": "%yumNovelExt_export_narou%",
 				"shortTitle": "NAROU",
 				"category": "Novel"
 			},
 			{
 				"command": "yumNovelExt.export.kakuyomu",
-				"title": "『カクヨム』向けに出力",
+				"title": "%yumNovelExt_export_kakuyomu%",
 				"shortTitle": "KAKUYOMU",
+				"category": "Novel"
+			},
+			{
+				"command": "yumNovelExt.export.epub",
+				"title": "%yumNovelExt_export_epub%",
+				"shortTitle": "EPUB",
 				"category": "Novel"
 			}
 		],
@@ -69,6 +75,12 @@
 				{
 					"command": "yumNovelExt.export.kakuyomu",
 					"alt": "yumNovelExt.export.kakuyomu",
+					"group": "yumNovel",
+					"when": "editorLangId == noveltext"
+				},
+				{
+					"command": "yumNovelExt.export.epub",
+					"alt": "yumNovelExt.export.epub",
 					"group": "yumNovel",
 					"when": "editorLangId == noveltext"
 				}
