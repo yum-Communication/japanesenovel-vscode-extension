@@ -235,7 +235,8 @@ function makeReplaceChars(indentNum:number, charType:string):string {
  */
 function addIndent(indentNumP:number, charTypeP:string, indentNumD:number, charTypeD:string): NovelFormatter
 {
-	const rgx = /^(「+[^「」]*」+)+$/;
+	const rgx1 = /^(「+[^「」]*」+)+$/;
+	const rgx2 = /^(『+[^『』]*』+)+$/;
 	const cP = makeReplaceChars(indentNumP, charTypeP);
 	const cD = makeReplaceChars(indentNumD, charTypeD);
 	return (row:string) =>
@@ -244,12 +245,23 @@ function addIndent(indentNumP:number, charTypeP:string, indentNumD:number, charT
 		{
 			return row;
 		}
-		if (rgx.test(row))
+		if (rgx1.test(row) || rgx2.test(row))
 		{
 			return cD + row;
 		}
 		return cP + row;
 	};
+}
+
+/**
+ * 行末の空白を除去する
+ * @returns 空白を除去する関数
+ */
+function removeLineEndSpace(): NovelFormatter {
+	const rgx = /[	 　]+$/;
+	return (row:string) => {
+		return row.replace(rgx, "");
+	}
 }
 
 /**
@@ -458,6 +470,7 @@ function toHTML(): NovelFormatter
 	const rgx2 = new RegExp(`${rubyStart}(.+?)${rubyOpen}(.+?)${rubyClose}`, "g");
 	const rgx3 = new RegExp(`${emOpen}(.+?)${emClose}`, "g");
 	const rgx4 = /^(「+[^「」]*」+)+$/;
+	const rgx5 = /^(『+[^『』]*』+)+$/;
 
 	return (row:string) => 
 	{
@@ -467,7 +480,7 @@ function toHTML(): NovelFormatter
 		}
 		let s = row.replace(rgx1a, '&amp;').replace(rgx1b, '&lt;').replace(rgx1c, '&gt;').replace(rgx1d, '&quot;')
 					.replace(rgx2,"<ruby>$1<rt>$2</rt></ruby>").replace(rgx3, em);
-		return (rgx4.test(row)?pD:pP) + s + "</p>";
+		return ((rgx4.test(row)||rgx5.test(row))?pD:pP) + s + "</p>";
 	};
 }
 
@@ -529,6 +542,7 @@ export function formatDocument(ary:string[], convertType:ConvertType, diagnostic
 			formatter.push(addIndent(cf.paragraphIndentNum, cf.paragraphIndentType, cf.dialogueIndentNum, cf.dialogueIndentType));
 		}
 	}
+	formatter.push(removeLineEndSpace());
 
 	switch(convertType)
 	{
