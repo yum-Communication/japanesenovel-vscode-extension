@@ -102,6 +102,10 @@
 			"name": "novel.text.kanji",
 			"match": "([々〇〻\u3400-\u9FFF\uF900-\uFAFF]|[\uD840-\uD87F][\uDC00-\uDFFF])([\uDB40][\udd00-\uddef]|[\uFE00-\uFE02])?"
 		},
+		"commonkanji0": {
+			"name": "novel.text.kanji.common.lv1",
+			"match": "[々〇〻]+"
+		},
 		"commonkanji1": {
 			"name": "novel.text.kanji.common.lv1",
 			"match": "[竹一七三上下中九二五人休先入八六円出力十千口右名四土夕大天女子字学小山川左年手文日早月木本村林校森正気水火犬玉王生田男町白百目石空立糸耳花草虫見貝赤足車金雨青音]+"

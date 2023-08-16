@@ -4,5 +4,6 @@
     "yumNovelExt_extractRubyAll": "ruby extraction (all files)",
     "yumNovelExt_export_narou": "export for NAROU",
     "yumNovelExt_export_kakuyomu": "export for KAKUYOMU",
-    "yumNovelExt_export_epub": "export for EPUB"
+    "yumNovelExt_export_epub": "export for EPUB",
+    "yumNovelExt_make_SettingsJson": "make settings.json"
 }

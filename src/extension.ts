@@ -32,7 +32,7 @@ import {
 	extractRubyFromDoc,
 	extractRubyFromWorkspace
 } from './rubyControl';
-
+import { makeSettingsJson } from './settingJson';
 import { disposeWatch, startWatch, stopWatch } from './watch';
 
 import {
@@ -45,11 +45,11 @@ function getBaseDir(): string | undefined {
 	if( workspace.workspaceFile )
 	{
 		// ワークスペースの設定ファイルが存在している
-		let m = workspace.workspaceFile.fsPath.match(/^.+[\/\\]/);
+		const m = workspace.workspaceFile.fsPath.match(/^.+[\/\\]/);
 		return m[0];
 	}
 
-	let wfs = workspace.workspaceFolders;
+	const wfs = workspace.workspaceFolders;
 	if(wfs)
 	{
 		return wfs[0].uri.fsPath;
@@ -75,7 +75,7 @@ function uniquenounsWatcherCb(eventName:string, filename:string, stats:Stats|und
  */
 export function activate(context: ExtensionContext)
 {
-	let wsBasePath = getBaseDir();
+	const wsBasePath = getBaseDir();
 	config.reload();
 
 	// 設定が変更されたら読み込みし直すよ
@@ -125,6 +125,10 @@ export function activate(context: ExtensionContext)
 		exportNovel(ConvertType.html);
 	}));
 
+	context.subscriptions.push(commands.registerCommand('yumNovelExt.makeSettingsJson', () => {
+		makeSettingsJson();
+	}));
+
 	const aeController = new ActiveEditorController();
 	context.subscriptions.push(aeController);
 
@@ -158,9 +162,9 @@ export function deactivate(): Thenable<void> | undefined
 const _getTitle = (text:String): string =>
 {
 	// 1行目を取り出す
-	var m = text.match(/[^\r\n]+/);
+	const m = text.match(/[^\r\n]+/);
 	const x = /[^ \t　]+\s(.+)/;
-	var n = m[0].match(/[^ \t　]+\s(.+)/);
+	const n = m[0].match(/[^ \t　]+\s(.+)/);
 	if(n)
 	{
 		return n[1];
@@ -215,7 +219,7 @@ ${s}
 				{
 					diagnosticColl.set(d.uri,diagnostics);
 					// 新規ファイルを作ってぶち込む
-					let doc = await workspace.openTextDocument({ language: (convertType===ConvertType.html ? 'html': 'noveltext') });
+					const doc = await workspace.openTextDocument({ language: (convertType===ConvertType.html ? 'html': 'noveltext') });
 					await window.showTextDocument(doc);
 					window.activeTextEditor.edit(editBuilder => {
 						editBuilder.insert(new Position(0, 0), s);
